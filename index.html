@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff">
+<title>거리에서 주운 문장 — 느리게 걷고, 오래 간직하기</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header"><a class="brand" href="./" aria-label="골목의 문장 처음으로"><span class="brand-symbol">巷</span><span>골목의 문장<small>SENTENCES IN THE ALLEY</small></span></a><div class="header-center"><span class="live-dot"></span> 어딘가에 남겨진 말들을 찾아서</div><button class="book-button" id="openBook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5c-3-2-7-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-2-1-6-1-9 1Zm0 0v15"/></svg>나의 문장집 <span id="headerCount">0</span></button></header>
+<main>
+<section class="intro"><div><div class="eyebrow"><span>동네 산책 아카이브</span><span class="line"></span> VOL. 01</div><h1>길을 잃어도,<br>문장은 남으니까.</h1></div><div class="intro-right"><p>이름 없는 골목을 천천히 걸어보세요.<br>스쳐 지나간 벽 위에, 당신을 기다리는 문장이 있어요.</p><span class="coordinates">2002년, 서울 어딘가 · 오후 4:20 <span>↘</span></span></div></section>
+<section class="experience" aria-label="1인칭 골목 탐험">
+<canvas id="world" tabindex="0" aria-label="방향키 또는 WASD로 걷고 마우스를 드래그하여 둘러보는 3차원 골목"></canvas>
+<canvas id="rainCanvas" aria-hidden="true"></canvas>
+<div class="scene-grain"></div><div class="scene-top"><span class="location"><i></i> 이름 없는 골목</span><div class="scene-actions"><button id="weatherButton" class="glass-icon" aria-pressed="false" aria-label="현재 맑은 날, 비 오는 날로 바꾸기" title="맑은 날과 비 오는 날 바꾸기">☀ 맑은 날</button><button id="returnButton" class="glass-icon return-button" aria-label="시작 화면으로 돌아가 수집한 문장 초기화" title="산책 기록을 초기화하고 시작 화면으로 돌아갑니다">↶ 처음으로</button><button id="soundButton" class="glass-icon" aria-label="골목·빗소리·발자국·고양이 소리 켜기" title="골목·빗소리·발자국·고양이 소리 켜기" aria-pressed="false">♫ <span>소리 꺼짐</span></button></div></div>
+<div class="scene-label"><span>SEOUL, 2002 / ALLEY WALK</span><h2>그 시절 골목의<br>남겨진 문장들</h2><p>오늘은 조금, 돌아가도 괜찮아.</p></div>
+<div class="compass"><span>N</span><div>‹ <b id="compassValue">북서</b> ›</div></div>
+<div class="route-map" aria-label="골목 안내도"><svg viewBox="0 0 70 66" fill="none"><path d="M12 56V32H55V6" stroke="#e2dcc0" stroke-width="8" stroke-linejoin="round" opacity=".25"/><path d="M12 56V32H55V6" stroke="#e2dcc0" stroke-width="1.4" stroke-dasharray="3 3"/><circle id="mapPosition" cx="12" cy="56" r="3" fill="#e8bd78"/></svg><small>돌아가는 골목</small></div><div class="crosshair" aria-hidden="true"></div>
+<div class="discovery" id="discovery"><span class="discovery-tag">첫 번째 문장</span><span class="discovery-name">벽에 남겨진 작은 위로</span><button id="collectButton">클릭해서 문장 수집 <span>＋</span></button></div>
+<div class="scene-bottom"><div class="walk-status"><span class="live-dot"></span> 천천히 걷는 중 <span class="divider">/</span> <span id="distance">0</span> m</div><button id="helpButton" class="help-button">? <span>산책 안내</span></button></div>
+<div class="mobile-controls" aria-label="이동 조작"><button data-key="ArrowUp" aria-label="앞으로">↑</button><div><button data-key="ArrowLeft" aria-label="왼쪽으로 회전">←</button><button data-key="ArrowDown" aria-label="뒤로">↓</button><button data-key="ArrowRight" aria-label="오른쪽으로 회전">→</button></div></div>
+<div class="error" id="error" hidden>이 골목을 보려면 WebGL을 지원하는 브라우저가 필요해요.</div>
+</section>
+<section class="walk-footer"><div class="controls"><span class="keygroup"><kbd>W</kbd><span><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span></span><span>방향키로 걷기 · <kbd>Shift</kbd> + 앞으로 빠르게</span><span class="control-separator"></span><svg width="17" height="23" viewBox="0 0 17 23" fill="none" stroke="currentColor"><rect x="1" y="1" width="15" height="21" rx="7.5"/><path d="M8.5 1v7"/></svg><span>드래그해서 둘러보기</span><span class="control-separator"></span><kbd>E</kbd><span>또는 문장을 클릭해 보기</span></div><div class="progress"><span>발견한 문장</span><b><span id="count">00</span><i>/ <span id="totalCount">20</span></i></b><div id="progressDots" class="progress-dots"></div></div></section>
+<footer><span>어떤 문장은, 걷는 사람에게만 보인다.</span><span>걷고 · 발견하고 · 간직하기 <span class="footer-star">✳</span></span></footer>
+</main>
+<dialog id="photoDialog" class="photo-dialog" aria-label="1번 문장의 실제 사진과 감상" aria-describedby="photoReflection">
+ <button id="closePhoto" class="photo-close" aria-label="수집하지 않고 닫기">×</button>
+ <div class="photo-layout">
+  <div class="photo-dismiss">
+   <img id="sentencePhoto" src="assets/sentence-01.jpg" alt="인생은 인간이 철들만큼 길지 않다라고 손으로 쓴 골목 안내판 사진" decoding="async">
+  </div>
+  <div id="photoReflection" class="photo-reflection" tabindex="-1">
+   <p>철이 든다는 건, 언젠가 끝나는 일인 줄 알았다.</p>
+   <p>하지만 우리는 늘 조금씩 모자란 채로 하루를 건넌다.</p>
+   <p>다 알게 된 다음에야 살기 시작할 수는 없으니까.</p>
+   <p>서툰 마음도 데리고, 지금의 시간을 지나가야겠다.</p>
+   <p>완벽히 어른이 되기보다 오늘을 놓치지 않는 쪽으로.</p>
+  </div>
+  <button id="savePhotoSentence" class="photo-save">수집하기</button>
+ </div>
+</dialog>
+<dialog id="sentenceDialog"><button class="close" data-close aria-label="닫기">×</button><div class="modal-eyebrow" id="sentenceType"></div><div class="paper-preview" id="paperPreview"><span class="paper-pin"></span><blockquote id="sentenceText"></blockquote><span id="sentenceAuthor"></span></div><p id="sentenceDescription" class="sentence-description"></p><button class="primary" id="saveSentence">수집하기</button></dialog>
+<dialog id="bookDialog" class="book-dialog"><button class="close" data-close aria-label="닫기">×</button><h2>나의 문장집<span id="bookCount">0</span></h2><div id="bookList"></div><button id="exportButton" class="export-button">영수증 PDF 내려받기 ↓</button></dialog>
+<dialog id="helpDialog"><button class="close" data-close aria-label="닫기">×</button><div class="eyebrow">HOW TO TAKE A WALK</div><h2>서두르지 않아도 괜찮아요.</h2><p>W·A·S·D 또는 방향키로 골목을 걸어요.<br>Shift를 누른 채 앞으로 가면 빠르게 걸을 수 있어요.<br>화면을 누른 채 드래그하면 주위를 둘러볼 수 있어요.<br>오른쪽 위 ‘처음으로’를 누르면 시작 화면으로 돌아가고<br>수집한 문장과 이동 거리도 초기화돼요.<br>휴대폰에서는 화면 아래 화살표를 사용하세요.</p><p>벽의 낙서나 전단지를 직접 클릭하면<br>사진과 글을 볼 수 있어요. 휴대폰에서는 톡 눌러주세요.<br>가까운 문장은 E 키나 보기 버튼으로도 열 수 있어요.<br>마음에 드는 문장은 ‘수집하기’를 누르고,<br>수집하지 않으려면 ×를 눌러 닫아주세요.</p><p class="muted">수집한 문장은 이 브라우저에 자동으로 보관돼요.<br>종이를 가져간 자리에는 테이프 흔적이 남아요.<br>위쪽 날씨 버튼으로 맑은 날과 비 오는 날을 바꿔보세요.</p><button class="primary" data-close>골목으로 돌아가기 ↗</button></dialog>
+<dialog id="startDialog" class="start-screen" aria-labelledby="startTitle">
+ <div class="start-panel">
+  <h1 id="startTitle" tabindex="-1" autofocus>거리에서 주운 문장</h1>
+  <div class="start-actions">
+   <button id="startButton" class="start-primary">시작하기</button>
+   <button id="projectButton" class="start-secondary">프로젝트 설명</button>
+  </div>
+ </div>
+</dialog>
+<dialog id="projectDialog" class="project-dialog" aria-labelledby="projectTitle">
+ <button class="close" data-close aria-label="프로젝트 설명 닫기">×</button>
+ <h2 id="projectTitle">거리에서 주운 문장</h2>
+ <p>이름 없는 골목을 걸으며, 누군가 남긴 문장을 발견하고 간직하는 작은 산책 게임입니다.</p>
+ <p>흑백의 풍경 속에서 문장만이 색을 띱니다. 벽에 붙은 종이를 클릭해 읽고 수집하기를 누르면 문장집에 담기고, 그 자리에는 테이프와 옅은 흔적이 남습니다.</p>
+ <p>맑은 날과 비 오는 날을 오가고, 고양이와 비둘기를 마주치며 나만의 속도로 걸어보세요. 모아온 문장은 영수증 모양의 문서로 내려받을 수 있습니다.</p>
+ <p class="project-ending">어떤 문장은, 걷는 사람에게만 보입니다.</p>
+ <button class="primary" data-close>시작 화면으로 돌아가기 <span aria-hidden="true">↗</span></button>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="receipt.js"></script>
+<script src="weather.js"></script>
+<script src="app.js"></script>
+</body></html>
